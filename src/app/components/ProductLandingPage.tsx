@@ -375,45 +375,64 @@ export function ProductLandingPage({
         </section>
 
         <section className="flex min-h-0 flex-1 flex-col justify-center px-4 py-4 md:px-8 md:py-5">
-          <div className="mx-auto grid w-full max-w-[80rem] grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
-            {linkColumns.map((column) => (
-              <div key={column.id} className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <MaterialSymbol
-                    name={column.icon}
-                    size="md"
-                    className="text-[var(--screening-text-secondary)]"
-                  />
-                  <h2
-                    className={cn(
-                      aceTypography(ACE_TYPE.p1Bold),
-                      "m-0 text-sm text-[var(--screening-text-primary)]",
-                    )}
-                  >
-                    {column.title}
-                  </h2>
+          <div
+            className={cn(
+              "mx-auto flex w-full max-w-[calc(4*var(--ace-landing-page-card-width)+3*1rem)] flex-col gap-4",
+            )}
+          >
+            <h2
+              className={cn(
+                aceTypography(ACE_TYPE.p1Bold),
+                "m-0 text-base text-[var(--screening-text-primary)]",
+              )}
+            >
+              Related
+            </h2>
+            <div
+              className={cn(
+                "grid w-full items-start gap-x-10 gap-y-8",
+                "grid-cols-1 min-[40rem]:grid-cols-3",
+              )}
+            >
+              {linkColumns.map((column) => (
+                <div key={column.id} className="flex min-w-0 flex-col gap-3">
+                  <div className="flex h-8 items-center gap-2">
+                    <MaterialSymbol
+                      name={column.icon}
+                      size="md"
+                      className="shrink-0 text-[var(--screening-text-secondary)]"
+                    />
+                    <h3
+                      className={cn(
+                        aceTypography(ACE_TYPE.p1Bold),
+                        "m-0 truncate text-sm text-[var(--screening-text-primary)]",
+                      )}
+                    >
+                      {column.title}
+                    </h3>
+                  </div>
+                  <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                    {column.links.map((label) => (
+                      <li key={label}>
+                        <button
+                          type="button"
+                          className={cn(
+                            aceTypography(ACE_TYPE.p1Regular),
+                            "text-left text-sm text-[var(--screening-text-primary)]",
+                            "rounded-[var(--radius-sm)] transition-colors duration-[var(--ace-motion-duration-fast)]",
+                            "[transition-timing-function:var(--ace-motion-ease-standard)]",
+                            "hover:text-[var(--screening-primary)] hover:underline",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)]",
+                          )}
+                        >
+                          {label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="m-0 flex list-none flex-col gap-2 p-0">
-                  {column.links.map((label) => (
-                    <li key={label}>
-                      <button
-                        type="button"
-                        className={cn(
-                          aceTypography(ACE_TYPE.p1Regular),
-                          "text-left text-sm text-[var(--screening-text-primary)]",
-                          "rounded-[var(--radius-sm)] transition-colors duration-[var(--ace-motion-duration-fast)]",
-                          "[transition-timing-function:var(--ace-motion-ease-standard)]",
-                          "hover:text-[var(--screening-primary)] hover:underline",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)]",
-                        )}
-                      >
-                        {label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 

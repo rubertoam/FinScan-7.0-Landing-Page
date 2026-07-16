@@ -42,17 +42,6 @@ const FEATURE_CARDS: readonly LandingFeatureCard[] = [
 
 const LINK_COLUMNS: readonly LandingLinkColumn[] = [
   {
-    id: "reports",
-    title: "KYC Reports",
-    icon: "bar_chart",
-    links: [
-      "Search Classification Summary Report",
-      "Total Searches by Application Report",
-      "Client Query Report",
-      "Media Module Summary Report",
-    ],
-  },
-  {
     id: "dashboards",
     title: "KYC Dashboards",
     icon: "public",
@@ -61,6 +50,17 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
       "Client Overrides",
       "Status Distribution",
       "Referral Resolution",
+    ],
+  },
+  {
+    id: "reports",
+    title: "KYC Reports",
+    icon: "bar_chart",
+    links: [
+      "Search Classification Summary Report",
+      "Total Searches by Application Report",
+      "Client Query Report",
+      "Media Module Summary Report",
     ],
   },
   {

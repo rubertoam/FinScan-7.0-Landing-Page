@@ -15,17 +15,6 @@ const HERO_DESCRIPTION =
 
 const LINK_COLUMNS: readonly LandingLinkColumn[] = [
   {
-    id: "reports",
-    title: "Watchlist Reports",
-    icon: "bar_chart",
-    links: [
-      "Case Work Report",
-      "Client Query Report",
-      "Composition Report",
-      "Composition Export by List Report",
-    ],
-  },
-  {
     id: "dashboards",
     title: "Watchlist Dashboards",
     icon: "balance",
@@ -35,6 +24,17 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
       "Open Matches by Age",
       "Load Summary",
       "Screening Summary",
+    ],
+  },
+  {
+    id: "reports",
+    title: "Watchlist Reports",
+    icon: "bar_chart",
+    links: [
+      "Case Work Report",
+      "Client Query Report",
+      "Composition Report",
+      "Composition Export by List Report",
     ],
   },
   {

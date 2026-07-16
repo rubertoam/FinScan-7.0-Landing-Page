@@ -11,17 +11,6 @@ const HERO_DESCRIPTION =
 
 const LINK_COLUMNS: readonly LandingLinkColumn[] = [
   {
-    id: "reports",
-    title: "Popular Reports",
-    icon: "bar_chart",
-    links: [
-      "Case Work Report",
-      "Payment Productivity Report",
-      "Search Classification Summary Report",
-      "Client Query Report",
-    ],
-  },
-  {
     id: "dashboards",
     title: "Dashboards",
     icon: "public",
@@ -30,6 +19,17 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
       "Average Resolution Time",
       "Media Classification",
       "Status Distribution",
+    ],
+  },
+  {
+    id: "reports",
+    title: "Popular Reports",
+    icon: "bar_chart",
+    links: [
+      "Case Work Report",
+      "Payment Productivity Report",
+      "Search Classification Summary Report",
+      "Client Query Report",
     ],
   },
   {

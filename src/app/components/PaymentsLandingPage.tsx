@@ -34,16 +34,6 @@ const FEATURE_CARDS: readonly LandingFeatureCard[] = [
 
 const LINK_COLUMNS: readonly LandingLinkColumn[] = [
   {
-    id: "reports",
-    title: "Payment Reports",
-    icon: "bar_chart",
-    links: [
-      "Payment Productivity Report",
-      "Payment History Report",
-      "Payment Composition Report",
-    ],
-  },
-  {
     id: "dashboards",
     title: "Payment Dashboards",
     icon: "balance",
@@ -53,6 +43,16 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
       "Screened Transactions",
       "Payment History",
       "Payment Status",
+    ],
+  },
+  {
+    id: "reports",
+    title: "Payment Reports",
+    icon: "bar_chart",
+    links: [
+      "Payment Productivity Report",
+      "Payment History Report",
+      "Payment Composition Report",
     ],
   },
   {

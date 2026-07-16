@@ -60,12 +60,17 @@ export function useSidebarGroupActions(
     enableGroupMenus = true,
     showItemCounts = true,
   } = options;
-  const [groups, setGroups] = useState<SidebarGroupData[]>(() =>
-    initialGroups.map((group) => ({
+  const [groups, setGroups] = useState<SidebarGroupData[]>(() => {
+    const selectedId =
+      initialSelectedItemId ?? initialGroups[0]?.items[0]?.id ?? "";
+    return initialGroups.map((group) => ({
       ...group,
+      // Keep the group that owns the selected item open by default.
+      expanded:
+        group.items.some((item) => item.id === selectedId) || group.expanded,
       items: group.items.map((item) => ({ ...item })),
-    })),
-  );
+    }));
+  });
   const [selectedItemId, setSelectedItemId] = useState(
     initialSelectedItemId ?? initialGroups[0]?.items[0]?.id ?? "",
   );

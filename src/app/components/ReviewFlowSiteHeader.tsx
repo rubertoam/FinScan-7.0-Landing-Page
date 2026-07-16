@@ -73,13 +73,26 @@ const REPORTING_FEATURE_ITEMS = [
 
 const SECTION_ITEMS = ["Reports", "Dashboards"] as const;
 
-const navTriggerClass = cn(
-  p1,
-  "relative inline-flex h-full min-h-[2.5rem] items-center gap-2 rounded-[var(--radius-sm)] px-3 py-3 text-sm text-[var(--screening-text-primary)]",
+const navSplitShellClass = cn(
+  "group/nav relative inline-flex h-full min-h-[2.5rem] items-stretch rounded-[var(--radius-sm)]",
   "transition-colors duration-[var(--ace-motion-duration-fast)]",
   motionEase,
   "hover:bg-[var(--ace-site-header-nav-hover)]",
-  "data-[state=open]:bg-[var(--ace-site-header-nav-hover)]",
+  "has-[[data-state=open]]:bg-[var(--ace-site-header-nav-hover)]",
+);
+
+const navLabelButtonClass = cn(
+  p1,
+  "inline-flex items-center rounded-l-[var(--radius-sm)] px-3 py-3 text-sm text-[var(--screening-text-primary)]",
+  "transition-colors duration-[var(--ace-motion-duration-fast)]",
+  motionEase,
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
+);
+
+const navMenuButtonClass = cn(
+  "inline-flex items-center rounded-r-[var(--radius-sm)] px-1.5 py-3 text-[var(--screening-text-primary)]",
+  "transition-colors duration-[var(--ace-motion-duration-fast)]",
+  motionEase,
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
 );
 
@@ -261,147 +274,86 @@ function ProductAccent({ color }: { color: string }) {
   );
 }
 
-function WatchlistNavMenu({
-  selected,
-  accent,
-  activeItem,
-  onOverviewSelect,
-  onAssignedCasesSelect,
-}: {
-  selected: boolean;
-  accent: string;
-  activeItem: "overview" | "assigned-cases" | null;
-  onOverviewSelect: () => void;
-  onAssignedCasesSelect: () => void;
-}) {
-  return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-current={selected ? "page" : undefined}
-          className={navTriggerClass}
-        >
-          <span>Watchlist</span>
-          <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
-          {selected ? <ProductAccent color={accent} /> : null}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
-        <DropdownMenuItem
-          className={activeItem === "overview" ? menuSelectedClass : menuItemClass}
-          onSelect={onOverviewSelect}
-        >
-          Overview
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator className={dashedSeparatorClass} />
-
-        {WATCHLIST_FEATURE_ITEMS.map((label) => {
-          const isAssignedCases = label === "Assigned Cases";
-          const isSelected = isAssignedCases && activeItem === "assigned-cases";
-          return (
-            <DropdownMenuItem
-              key={label}
-              className={isSelected ? menuSelectedClass : menuItemClass}
-              onSelect={isAssignedCases ? onAssignedCasesSelect : undefined}
-            >
-              {label}
-            </DropdownMenuItem>
-          );
-        })}
-
-        <DropdownMenuSeparator className={dashedSeparatorClass} />
-
-        {SECTION_ITEMS.map((label) => (
-          <DropdownMenuItem key={label} className={menuItemClass}>
-            <span className="min-w-0 flex-1 truncate">{label}</span>
-            <MaterialSymbol
-              name="chevron_right"
-              size="md"
-              className={cn(aceChevronIconClass, "ml-auto text-[var(--ace-dropdown-menu-primary)]")}
-            />
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function ProductLandingNavMenu({
+function ProductNavSplit({
   label,
   selected,
   accent,
-  activeItem,
-  featureItems,
-  onOverviewSelect,
-  onFeatureSelect,
-  activeFeature,
-  showOverview = true,
-  showSections = true,
+  onLabelSelect,
+  menu,
 }: {
   label: string;
   selected: boolean;
   accent: string;
-  activeItem: "overview" | null;
-  featureItems: readonly string[];
-  onOverviewSelect: () => void;
-  onFeatureSelect?: (feature: string) => void;
-  activeFeature?: string | null;
-  showOverview?: boolean;
-  showSections?: boolean;
+  onLabelSelect: () => void;
+  menu: React.ReactNode;
 }) {
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-current={selected ? "page" : undefined}
-          className={navTriggerClass}
-        >
-          <span>{label}</span>
-          <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
-          {selected ? <ProductAccent color={accent} /> : null}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
-        {showOverview ? (
-          <>
-            <DropdownMenuItem
-              className={activeItem === "overview" ? menuSelectedClass : menuItemClass}
-              onSelect={onOverviewSelect}
-            >
-              Overview
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className={dashedSeparatorClass} />
-          </>
-        ) : null}
+    <div className={navSplitShellClass}>
+      <button
+        type="button"
+        aria-current={selected ? "page" : undefined}
+        aria-label={label}
+        onClick={onLabelSelect}
+        className={navLabelButtonClass}
+      >
+        {label}
+      </button>
+      {menu}
+      {selected ? <ProductAccent color={accent} /> : null}
+    </div>
+  );
+}
 
-        {featureItems.map((itemLabel) => {
-          const isActive = activeFeature === itemLabel;
-          return (
-            <DropdownMenuItem
-              key={itemLabel}
-              className={isActive ? menuSelectedClass : menuItemClass}
-              onSelect={
-                onFeatureSelect
-                  ? () => onFeatureSelect(itemLabel)
-                  : itemLabel === featureItems[0]
-                    ? onOverviewSelect
-                    : undefined
-              }
+function WatchlistNavMenu({
+  selected,
+  accent,
+  activeItem,
+  onLandingSelect,
+  onAssignedCasesSelect,
+}: {
+  selected: boolean;
+  accent: string;
+  activeItem: "assigned-cases" | null;
+  onLandingSelect: () => void;
+  onAssignedCasesSelect: () => void;
+}) {
+  return (
+    <ProductNavSplit
+      label="Watchlist"
+      selected={selected}
+      accent={accent}
+      onLabelSelect={onLandingSelect}
+      menu={
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Watchlist menu"
+              className={navMenuButtonClass}
             >
-              {itemLabel}
-            </DropdownMenuItem>
-          );
-        })}
+              <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
+            {WATCHLIST_FEATURE_ITEMS.map((label) => {
+              const isAssignedCases = label === "Assigned Cases";
+              const isSelected = isAssignedCases && activeItem === "assigned-cases";
+              return (
+                <DropdownMenuItem
+                  key={label}
+                  className={isSelected ? menuSelectedClass : menuItemClass}
+                  onSelect={isAssignedCases ? onAssignedCasesSelect : undefined}
+                >
+                  {label}
+                </DropdownMenuItem>
+              );
+            })}
 
-        {showSections ? (
-          <>
             <DropdownMenuSeparator className={dashedSeparatorClass} />
-            {SECTION_ITEMS.map((sectionLabel) => (
-              <DropdownMenuItem key={sectionLabel} className={menuItemClass}>
-                <span className="min-w-0 flex-1 truncate">{sectionLabel}</span>
+
+            {SECTION_ITEMS.map((label) => (
+              <DropdownMenuItem key={label} className={menuItemClass}>
+                <span className="min-w-0 flex-1 truncate">{label}</span>
                 <MaterialSymbol
                   name="chevron_right"
                   size="md"
@@ -409,10 +361,87 @@ function ProductLandingNavMenu({
                 />
               </DropdownMenuItem>
             ))}
-          </>
-        ) : null}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      }
+    />
+  );
+}
+
+function ProductLandingNavMenu({
+  label,
+  selected,
+  accent,
+  featureItems,
+  onLandingSelect,
+  onFeatureSelect,
+  activeFeature,
+  showSections = true,
+}: {
+  label: string;
+  selected: boolean;
+  accent: string;
+  featureItems: readonly string[];
+  onLandingSelect: () => void;
+  onFeatureSelect?: (feature: string) => void;
+  activeFeature?: string | null;
+  showSections?: boolean;
+}) {
+  return (
+    <ProductNavSplit
+      label={label}
+      selected={selected}
+      accent={accent}
+      onLabelSelect={onLandingSelect}
+      menu={
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label={`${label} menu`}
+              className={navMenuButtonClass}
+            >
+              <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
+            {featureItems.map((itemLabel) => {
+              const isActive = activeFeature === itemLabel;
+              return (
+                <DropdownMenuItem
+                  key={itemLabel}
+                  className={isActive ? menuSelectedClass : menuItemClass}
+                  onSelect={
+                    onFeatureSelect ? () => onFeatureSelect(itemLabel) : undefined
+                  }
+                >
+                  {itemLabel}
+                </DropdownMenuItem>
+              );
+            })}
+
+            {showSections ? (
+              <>
+                <DropdownMenuSeparator className={dashedSeparatorClass} />
+                {SECTION_ITEMS.map((sectionLabel) => (
+                  <DropdownMenuItem key={sectionLabel} className={menuItemClass}>
+                    <span className="min-w-0 flex-1 truncate">{sectionLabel}</span>
+                    <MaterialSymbol
+                      name="chevron_right"
+                      size="md"
+                      className={cn(
+                        aceChevronIconClass,
+                        "ml-auto text-[var(--ace-dropdown-menu-primary)]",
+                      )}
+                    />
+                  </DropdownMenuItem>
+                ))}
+              </>
+            ) : null}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      }
+    />
   );
 }
 
@@ -429,15 +458,7 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
     openReportingDataManager,
     openReviewAssigned,
   } = useUserFlow();
-  const watchlistActiveItem =
-    appView === "review"
-      ? "assigned-cases"
-      : landingProduct === "watchlist"
-        ? "overview"
-        : null;
-  const paymentsActiveItem =
-    appView === "landing" && landingProduct === "payments" ? "overview" : null;
-  const kycActiveItem = appView === "landing" && landingProduct === "kyc" ? "overview" : null;
+  const watchlistActiveItem = appView === "review" ? "assigned-cases" : null;
   const reportingActiveFeature =
     appView === "reporting-dashboard"
       ? "Dashboard"
@@ -459,7 +480,7 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               selected={selected}
               accent={item.accent}
               activeItem={watchlistActiveItem}
-              onOverviewSelect={openWatchlistLanding}
+              onLandingSelect={openWatchlistLanding}
               onAssignedCasesSelect={openReviewAssigned}
             />
           );
@@ -472,9 +493,8 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               label="Payments"
               selected={selected}
               accent={item.accent}
-              activeItem={paymentsActiveItem}
               featureItems={PAYMENTS_FEATURE_ITEMS}
-              onOverviewSelect={openPaymentsLanding}
+              onLandingSelect={openPaymentsLanding}
             />
           );
         }
@@ -486,9 +506,8 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               label="KYC"
               selected={selected}
               accent={item.accent}
-              activeItem={kycActiveItem}
               featureItems={KYC_FEATURE_ITEMS}
-              onOverviewSelect={openKycLanding}
+              onLandingSelect={openKycLanding}
             />
           );
         }
@@ -500,9 +519,8 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               label="Reporting"
               selected={selected}
               accent={item.accent}
-              activeItem={null}
               featureItems={REPORTING_FEATURE_ITEMS}
-              onOverviewSelect={openReportingLanding}
+              onLandingSelect={openReportingLanding}
               activeFeature={reportingActiveFeature}
               onFeatureSelect={(feature) => {
                 if (feature === "Dashboard") openReportingDashboard();
@@ -510,7 +528,6 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
                 else if (feature === "Data Manager") openReportingDataManager();
                 else openReportingLanding();
               }}
-              showOverview={false}
               showSections={false}
             />
           );

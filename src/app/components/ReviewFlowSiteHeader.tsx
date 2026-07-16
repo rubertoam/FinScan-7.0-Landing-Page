@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { FinScanProfileAvatar } from "@ace-ds/lib/finscanProfileAvatars";
 import { AceSiteHeader } from "@ace-ds/components/organisms/AceSiteHeader/AceSiteHeader";
 import { MaterialSymbol } from "@ace-ds/components/molecules/AceAccordion/MaterialSymbol";
@@ -73,26 +74,27 @@ const REPORTING_FEATURE_ITEMS = [
 
 const SECTION_ITEMS = ["Reports", "Dashboards"] as const;
 
-const navSplitShellClass = cn(
-  "group/nav relative inline-flex h-full min-h-[2.5rem] items-stretch rounded-[var(--radius-sm)]",
-  "transition-colors duration-[var(--ace-motion-duration-fast)]",
-  motionEase,
-  "hover:bg-[var(--ace-site-header-nav-hover)]",
-  "has-[[data-state=open]]:bg-[var(--ace-site-header-nav-hover)]",
-);
+const navSplitShellClass =
+  "relative inline-flex h-full min-h-[2.5rem] items-stretch rounded-[var(--radius-sm)]";
 
+/** Label opens the landing — neutral fill hover. */
 const navLabelButtonClass = cn(
   p1,
   "inline-flex items-center rounded-l-[var(--radius-sm)] px-3 py-3 text-sm text-[var(--screening-text-primary)]",
-  "transition-colors duration-[var(--ace-motion-duration-fast)]",
+  "transition-[background-color,color] duration-[var(--ace-motion-duration-fast)]",
   motionEase,
+  "hover:bg-[var(--ace-site-header-nav-hover)]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
 );
 
+/** Chevron opens the menu — purple soft fill + divider so it reads as a separate control. */
 const navMenuButtonClass = cn(
-  "inline-flex items-center rounded-r-[var(--radius-sm)] px-1.5 py-3 text-[var(--screening-text-primary)]",
-  "transition-colors duration-[var(--ace-motion-duration-fast)]",
+  "inline-flex items-center self-stretch rounded-r-[var(--radius-sm)] border-l border-transparent px-1.5 py-3",
+  "text-[var(--screening-text-primary)]",
+  "transition-[background-color,border-color,color] duration-[var(--ace-motion-duration-fast)]",
   motionEase,
+  "hover:border-[var(--screening-border-row)] hover:bg-[var(--screening-primary-soft-bg)] hover:text-[var(--ace-button-purple-500)]",
+  "data-[state=open]:border-[var(--screening-border-row)] data-[state=open]:bg-[var(--screening-primary-soft-bg)] data-[state=open]:text-[var(--ace-button-purple-500)]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
 );
 
@@ -123,7 +125,7 @@ function ToolbarIconButton({
   children,
 }: {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button type="button" aria-label={label} className={aceIconButtonHoverClass}>
@@ -279,28 +281,74 @@ function ProductNavSplit({
   selected,
   accent,
   onLabelSelect,
-  menu,
+  children,
 }: {
   label: string;
   selected: boolean;
   accent: string;
   onLabelSelect: () => void;
-  menu: React.ReactNode;
+  children: ReactNode;
 }) {
+  const shellRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const [alignOffset, setAlignOffset] = useState(0);
+
+  const syncAlignOffset = () => {
+    const shell = shellRef.current;
+    const menuButton = menuButtonRef.current;
+    if (!shell || !menuButton) return;
+    // Anchor the menu to the full nav piece, not just the chevron trigger.
+    setAlignOffset(-(shell.offsetWidth - menuButton.offsetWidth));
+  };
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    syncAlignOffset();
+    window.addEventListener("resize", syncAlignOffset);
+    return () => window.removeEventListener("resize", syncAlignOffset);
+  }, [open]);
+
   return (
-    <div className={navSplitShellClass}>
-      <button
-        type="button"
-        aria-current={selected ? "page" : undefined}
-        aria-label={label}
-        onClick={onLabelSelect}
-        className={navLabelButtonClass}
+    <DropdownMenu
+      modal={false}
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (nextOpen) syncAlignOffset();
+        setOpen(nextOpen);
+      }}
+    >
+      <div ref={shellRef} className={navSplitShellClass}>
+        <button
+          type="button"
+          aria-current={selected ? "page" : undefined}
+          aria-label={label}
+          onClick={onLabelSelect}
+          className={navLabelButtonClass}
+        >
+          {label}
+        </button>
+        <DropdownMenuTrigger asChild>
+          <button
+            ref={menuButtonRef}
+            type="button"
+            aria-label={`${label} menu`}
+            className={navMenuButtonClass}
+          >
+            <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
+          </button>
+        </DropdownMenuTrigger>
+        {selected ? <ProductAccent color={accent} /> : null}
+      </div>
+      <DropdownMenuContent
+        align="start"
+        alignOffset={alignOffset}
+        sideOffset={4}
+        className="min-w-[16.5rem] p-2"
       >
-        {label}
-      </button>
-      {menu}
-      {selected ? <ProductAccent color={accent} /> : null}
-    </div>
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -323,48 +371,34 @@ function WatchlistNavMenu({
       selected={selected}
       accent={accent}
       onLabelSelect={onLandingSelect}
-      menu={
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label="Watchlist menu"
-              className={navMenuButtonClass}
-            >
-              <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
-            {WATCHLIST_FEATURE_ITEMS.map((label) => {
-              const isAssignedCases = label === "Assigned Cases";
-              const isSelected = isAssignedCases && activeItem === "assigned-cases";
-              return (
-                <DropdownMenuItem
-                  key={label}
-                  className={isSelected ? menuSelectedClass : menuItemClass}
-                  onSelect={isAssignedCases ? onAssignedCasesSelect : undefined}
-                >
-                  {label}
-                </DropdownMenuItem>
-              );
-            })}
+    >
+      {WATCHLIST_FEATURE_ITEMS.map((itemLabel) => {
+        const isAssignedCases = itemLabel === "Assigned Cases";
+        const isSelected = isAssignedCases && activeItem === "assigned-cases";
+        return (
+          <DropdownMenuItem
+            key={itemLabel}
+            className={isSelected ? menuSelectedClass : menuItemClass}
+            onSelect={isAssignedCases ? onAssignedCasesSelect : undefined}
+          >
+            {itemLabel}
+          </DropdownMenuItem>
+        );
+      })}
 
-            <DropdownMenuSeparator className={dashedSeparatorClass} />
+      <DropdownMenuSeparator className={dashedSeparatorClass} />
 
-            {SECTION_ITEMS.map((label) => (
-              <DropdownMenuItem key={label} className={menuItemClass}>
-                <span className="min-w-0 flex-1 truncate">{label}</span>
-                <MaterialSymbol
-                  name="chevron_right"
-                  size="md"
-                  className={cn(aceChevronIconClass, "ml-auto text-[var(--ace-dropdown-menu-primary)]")}
-                />
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      }
-    />
+      {SECTION_ITEMS.map((itemLabel) => (
+        <DropdownMenuItem key={itemLabel} className={menuItemClass}>
+          <span className="min-w-0 flex-1 truncate">{itemLabel}</span>
+          <MaterialSymbol
+            name="chevron_right"
+            size="md"
+            className={cn(aceChevronIconClass, "ml-auto text-[var(--ace-dropdown-menu-primary)]")}
+          />
+        </DropdownMenuItem>
+      ))}
+    </ProductNavSplit>
   );
 }
 
@@ -393,55 +427,39 @@ function ProductLandingNavMenu({
       selected={selected}
       accent={accent}
       onLabelSelect={onLandingSelect}
-      menu={
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label={`${label} menu`}
-              className={navMenuButtonClass}
-            >
-              <MaterialSymbol name="keyboard_arrow_down" className={aceChevronIconClass} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" sideOffset={4} className="min-w-[16.5rem] p-2">
-            {featureItems.map((itemLabel) => {
-              const isActive = activeFeature === itemLabel;
-              return (
-                <DropdownMenuItem
-                  key={itemLabel}
-                  className={isActive ? menuSelectedClass : menuItemClass}
-                  onSelect={
-                    onFeatureSelect ? () => onFeatureSelect(itemLabel) : undefined
-                  }
-                >
-                  {itemLabel}
-                </DropdownMenuItem>
-              );
-            })}
+    >
+      {featureItems.map((itemLabel) => {
+        const isActive = activeFeature === itemLabel;
+        return (
+          <DropdownMenuItem
+            key={itemLabel}
+            className={isActive ? menuSelectedClass : menuItemClass}
+            onSelect={onFeatureSelect ? () => onFeatureSelect(itemLabel) : undefined}
+          >
+            {itemLabel}
+          </DropdownMenuItem>
+        );
+      })}
 
-            {showSections ? (
-              <>
-                <DropdownMenuSeparator className={dashedSeparatorClass} />
-                {SECTION_ITEMS.map((sectionLabel) => (
-                  <DropdownMenuItem key={sectionLabel} className={menuItemClass}>
-                    <span className="min-w-0 flex-1 truncate">{sectionLabel}</span>
-                    <MaterialSymbol
-                      name="chevron_right"
-                      size="md"
-                      className={cn(
-                        aceChevronIconClass,
-                        "ml-auto text-[var(--ace-dropdown-menu-primary)]",
-                      )}
-                    />
-                  </DropdownMenuItem>
-                ))}
-              </>
-            ) : null}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      }
-    />
+      {showSections ? (
+        <>
+          <DropdownMenuSeparator className={dashedSeparatorClass} />
+          {SECTION_ITEMS.map((sectionLabel) => (
+            <DropdownMenuItem key={sectionLabel} className={menuItemClass}>
+              <span className="min-w-0 flex-1 truncate">{sectionLabel}</span>
+              <MaterialSymbol
+                name="chevron_right"
+                size="md"
+                className={cn(
+                  aceChevronIconClass,
+                  "ml-auto text-[var(--ace-dropdown-menu-primary)]",
+                )}
+              />
+            </DropdownMenuItem>
+          ))}
+        </>
+      ) : null}
+    </ProductNavSplit>
   );
 }
 

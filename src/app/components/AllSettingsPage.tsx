@@ -111,6 +111,7 @@ export function AllSettingsPage() {
         <AskChattyBubble open={chattyOpen} onClose={() => setChattyOpen(false)} />
         <button
           type="button"
+          data-ask-chatty-trigger
           aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
           aria-expanded={chattyOpen}
           onClick={() => setChattyOpen((open) => !open)}

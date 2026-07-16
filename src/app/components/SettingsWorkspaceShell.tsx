@@ -109,8 +109,6 @@ export function SettingsWorkspaceShell({
                 "h-full min-h-0 !shadow-none",
                 // Hide New Group; restore top inset so first group isn’t clipped.
                 "[&>div>div:first-child]:hidden [&>div>nav]:pt-5",
-                // Settings groups have no Edit/Copy/Delete — hide ACE overflow triggers.
-                "[&_button[aria-label^='Actions for']]:hidden",
               )}
             />
           </div>
@@ -123,6 +121,7 @@ export function SettingsWorkspaceShell({
         <AskChattyBubble open={chattyOpen} onClose={() => setChattyOpen(false)} />
         <button
           type="button"
+          data-ask-chatty-trigger
           aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
           aria-expanded={chattyOpen}
           onClick={() => setChattyOpen((open) => !open)}

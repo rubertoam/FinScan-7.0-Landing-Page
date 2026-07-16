@@ -62,6 +62,7 @@ function buildChattyReply(input: string): string {
 export function AskChattyBubble({ open, onClose }: AskChattyBubbleProps) {
   const titleId = useId();
   const inputId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const replyTimerRef = useRef<number | null>(null);
@@ -75,6 +76,22 @@ export function AskChattyBubble({ open, onClose }: AskChattyBubbleProps) {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus());
     return () => window.cancelAnimationFrame(frame);
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (panelRef.current?.contains(target)) return;
+      // FAB toggles open/closed itself — don't close+reopen on the same click.
+      if (target.closest("[data-ask-chatty-trigger]")) return;
+      onClose();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open, onClose]);
 
   useEffect(() => {
     return () => {
@@ -122,6 +139,7 @@ export function AskChattyBubble({ open, onClose }: AskChattyBubbleProps) {
 
   return (
     <div
+      ref={panelRef}
       role="dialog"
       aria-modal="false"
       aria-labelledby={titleId}

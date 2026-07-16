@@ -130,8 +130,8 @@ function CountBadge({
         aceTypography(ACE_TYPE.captionBold),
         "text-[10px] leading-none text-white",
         tone === "orange"
-          ? "bg-[var(--ace-status-pending-orange-500)]"
-          : "bg-[var(--ace-status-critical-red-500)]",
+          ? "bg-[var(--ace-status-pill-orange-dot)]"
+          : "bg-[var(--ace-status-pill-red-dot)]",
       )}
       aria-label={label}
     >
@@ -432,6 +432,7 @@ export function ProductLandingPage({
 
         <button
           type="button"
+          data-ask-chatty-trigger
           aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
           aria-expanded={chattyOpen}
           onClick={() => setChattyOpen((open) => !open)}

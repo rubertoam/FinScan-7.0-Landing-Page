@@ -74,27 +74,29 @@ const REPORTING_FEATURE_ITEMS = [
 
 const SECTION_ITEMS = ["Reports", "Dashboards"] as const;
 
-const navSplitShellClass =
-  "relative inline-flex h-full min-h-[2.5rem] items-stretch rounded-[var(--radius-sm)]";
+const navSplitShellClass = cn(
+  "group/nav relative inline-flex h-full min-h-[2.5rem] items-stretch rounded-[var(--radius-sm)]",
+  "transition-colors duration-[var(--ace-motion-duration-fast)]",
+  motionEase,
+  // Shared hover across label + chevron
+  "hover:bg-[var(--ace-site-header-nav-hover)]",
+  "has-[[data-state=open]]:bg-[var(--ace-site-header-nav-hover)]",
+);
 
-/** Label opens the landing — neutral fill hover. */
 const navLabelButtonClass = cn(
   p1,
-  "inline-flex items-center rounded-l-[var(--radius-sm)] px-3 py-3 text-sm text-[var(--screening-text-primary)]",
-  "transition-[background-color,color] duration-[var(--ace-motion-duration-fast)]",
-  motionEase,
-  "hover:bg-[var(--ace-site-header-nav-hover)]",
+  "inline-flex items-center rounded-l-[var(--radius-sm)] bg-transparent px-3 py-3 text-sm text-[var(--screening-text-primary)]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
 );
 
-/** Chevron opens the menu — purple soft fill + divider so it reads as a separate control. */
 const navMenuButtonClass = cn(
-  "inline-flex items-center self-stretch rounded-r-[var(--radius-sm)] border-l border-transparent px-1.5 py-3",
-  "text-[var(--screening-text-primary)]",
-  "transition-[background-color,border-color,color] duration-[var(--ace-motion-duration-fast)]",
+  "inline-flex items-center self-stretch rounded-r-[var(--radius-sm)] bg-transparent px-1.5 py-3",
+  "border-l border-transparent text-[var(--screening-text-primary)]",
+  "transition-[border-color] duration-[var(--ace-motion-duration-fast)]",
   motionEase,
-  "hover:border-[var(--screening-border-row)] hover:bg-[var(--screening-primary-soft-bg)] hover:text-[var(--ace-button-purple-500)]",
-  "data-[state=open]:border-[var(--screening-border-row)] data-[state=open]:bg-[var(--screening-primary-soft-bg)] data-[state=open]:text-[var(--ace-button-purple-500)]",
+  // Gray divider between label and chevron on shared hover / open
+  "group-hover/nav:border-[var(--screening-border-row)]",
+  "data-[state=open]:border-[var(--screening-border-row)]",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--screening-primary-ring-offset)]",
 );
 

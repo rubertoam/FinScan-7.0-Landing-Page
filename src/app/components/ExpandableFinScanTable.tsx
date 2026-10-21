@@ -60,15 +60,19 @@ const leadingBodyPad = (isCompact: boolean) => (isCompact ? "py-1.5" : "py-3");
 function SelectCheckboxCell({
   children,
   visible = true,
+  alignStart = false,
 }: {
   children: ReactNode;
   visible?: boolean;
+  /** Left-align when the column carries side inset (e.g. accordion padding). */
+  alignStart?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-center">
+    <div className={cn("flex items-center", alignStart ? "justify-start" : "justify-center")}>
       <span
         className={cn(
           checkboxPadWrapClass,
+          alignStart && "p-0",
           visible ? "opacity-100" : "opacity-0 group-hover/row:opacity-100",
         )}
       >
@@ -119,6 +123,11 @@ export type ExpandableFinScanTableProps<T extends { id: string }> = {
   };
   /** When false, hides the header “expand all / collapse all” control. */
   showExpandAll?: boolean;
+  /**
+   * Extra classes on the selection column cells (e.g. accordion side padding so
+   * checkboxes line up with a section title above the table).
+   */
+  selectionCellClassName?: string;
   /** Tighter cell padding for narrow panels (e.g. simulator drawer). */
   density?: "default" | "compact";
   renderExpandedContent?: (row: T) => ReactNode;
@@ -157,6 +166,7 @@ export function ExpandableFinScanTable<T extends { id: string }>({
   expandable = true,
   isRowExpandable,
   showExpandAll = true,
+  selectionCellClassName,
   density = "default",
   renderExpandedContent,
   emptyState,
@@ -309,7 +319,9 @@ export function ExpandableFinScanTable<T extends { id: string }>({
         <caption className="sr-only">{caption}</caption>
         <colgroup>
           {showExpandCol ? <col className="w-[34px]" /> : null}
-          {showSelectionCol ? <col className="w-7" /> : null}
+          {showSelectionCol ? (
+            <col className={selectionCellClassName ? "w-[calc(1.25rem+var(--ace-accordion-px))]" : "w-7"} />
+          ) : null}
           {columns.map((col) => (
             <col key={col.key} className={col.colClassName} />
           ))}
@@ -326,8 +338,11 @@ export function ExpandableFinScanTable<T extends { id: string }>({
               </th>
             ) : null}
             {showSelectionCol ? (
-              <th scope="col" className={cn(selectColClass, leadingHeaderPad(isCompact))}>
-                <SelectCheckboxCell>
+              <th
+                scope="col"
+                className={cn(selectColClass, leadingHeaderPad(isCompact), selectionCellClassName)}
+              >
+                <SelectCheckboxCell alignStart={Boolean(selectionCellClassName)}>
                   <Checkbox
                     size="md"
                     checked={selection.headerCheckboxState}
@@ -411,8 +426,13 @@ export function ExpandableFinScanTable<T extends { id: string }>({
                   </td>
                 ) : null}
                 {showSelectionCol ? (
-                  <td className={cn(selectColClass, leadingBodyPad(isCompact))}>
-                    <SelectCheckboxCell visible={showControls}>
+                  <td
+                    className={cn(selectColClass, leadingBodyPad(isCompact), selectionCellClassName)}
+                  >
+                    <SelectCheckboxCell
+                      visible={showControls}
+                      alignStart={Boolean(selectionCellClassName)}
+                    >
                       <Checkbox
                         size="md"
                         checked={selected}

@@ -50,6 +50,8 @@ Organisms: `ScreeningResultsTable`, `AceSidebar`, `AceSiteHeader`, `AceDatePicke
 | **`AceSiteHeader` logo click** | Missing | No `onLogoClick` / home action. Prototype overlays a hit target in `ReviewFlowSiteHeader` to open the selected start page. |
 | **`AceSidebar` hide New Group** | Missing | Groups variant always renders the top “New Group” control. Data Manager hides it via a local CSS selector until DS adds e.g. `showNewGroup`. |
 | **Case list, task bar, review drawer** | Custom | Figma-derived markup; not yet migrated to DS organisms. |
+| **Floating purple selection task bar** | Missing | Case Browser wireframe uses a centered purple selection bar (Select all / Deselect all / Review / dismiss). `AceTaskBar` is the white Review Assigned chrome — different pattern. Local markup on `CaseBrowserPage` until DS adds a selection-bar variant. |
+| **Textarea / multi-line input** | Missing | KYC Client Search “Address Elements” uses a locally styled `<textarea>` matching screening input tokens. Prefer an `AceTextarea` (or `AceInputField` multiline) when added to DS. |
 | **Full screening table cells** | Partial | Section shell uses `AceAccordion`; row/table chrome still has hardcoded colors in places. |
 | **Typography & colors (shell)** | Partial | Top nav, page header, pills, and accordion headers use `--ace-type-*` / `--screening-*` tokens. Many detail panels and table cells still use legacy hex / `font-['Noto_Sans:…']`. |
 | **Unused shims** | Local only | `ui/sidebar.tsx`, `ui/accordion.tsx` (shadcn/Radix) remain unused. |

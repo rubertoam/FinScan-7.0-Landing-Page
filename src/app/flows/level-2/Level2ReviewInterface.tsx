@@ -18,7 +18,6 @@ import { CaseListFilterEmptyState } from "../../components/CaseListFilterEmptySt
 import { CaseListSection } from "../../components/CaseListSection";
 import { ThemeProvider } from "../../context/ThemeContext";
 import { aceAccordionFixedHeaderClass } from "../../lib/aceAccordion";
-import { aceDropShadowXsClass } from "../../lib/aceShadow";
 import { aceTypography, ACE_TYPE } from "../../lib/aceTypography";
 import { ReviewPanelEmptyState } from "../../components/ReviewPanelEmptyState";
 import { ReviewFlowSiteHeader } from "../../components/ReviewFlowSiteHeader";
@@ -77,6 +76,14 @@ import { AceSidebar } from "@ace-ds/components/organisms/AceSidebar/AceSidebar";
 import { sidebarIconButtonClass } from "@ace-ds/components/organisms/AceSidebar/sidebarRowActions";
 import { ReviewSidebarGroupSection } from "../../components/ReviewSidebarGroupSection";
 import { AceAccordion } from "@ace-ds/components/molecules/AceAccordion/AceAccordion";
+import {
+  aceScrollableListControlsClass,
+  aceScrollableListHeaderClass,
+  aceScrollableListNotoVar,
+  aceScrollableListShellClass,
+  aceScrollableListShellExpandedClass,
+  aceScrollableListTitleClass,
+} from "@ace-ds/components/organisms/AceScrollableList/scrollableListFieldStyles";
 
 interface PageHeaderProps {
   isSidebarOpen: boolean;
@@ -499,24 +506,30 @@ function CaseList({
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       className={cn(
-        "flex min-h-0 w-64 flex-1 flex-col overflow-x-hidden overflow-y-auto rounded-[var(--radius-sm)] border border-[var(--screening-border-strong)] bg-[var(--screening-surface)] outline-none lg:w-72",
-        aceDropShadowXsClass,
+        aceScrollableListShellClass,
+        aceScrollableListShellExpandedClass,
+        "flex-1 overflow-x-hidden overflow-y-auto",
       )}
     >
-      <div className="flex items-center justify-between px-3 pb-3 pt-5">
-        <p className="font-['Noto_Sans:Bold',sans-serif] font-bold leading-[1.65] text-[14px] text-[var(--screening-text-primary)]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100" }}>
+      <div className={aceScrollableListHeaderClass}>
+        <p className={aceScrollableListTitleClass} style={aceScrollableListNotoVar}>
           Sanction Matches
         </p>
-        <div className="flex items-center justify-center rounded-[4px] border border-[var(--screening-pill-new-border)] bg-[var(--screening-pill-new-surface)] px-2 py-1 min-w-[25px]">
-          <p className="font-['Noto_Sans:Bold',sans-serif] font-bold leading-[1.65] text-[var(--screening-pill-new-label)] text-[14px]" style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100" }}>{pendingRows.length}</p>
+        <div className="flex min-w-[25px] items-center justify-center rounded-[4px] border border-[var(--screening-pill-new-border)] bg-[var(--screening-pill-new-surface)] px-2 py-1">
+          <p
+            className="font-['Noto_Sans:Bold',sans-serif] text-[14px] font-bold leading-[1.65] text-[var(--screening-pill-new-label)]"
+            style={aceScrollableListNotoVar}
+          >
+            {pendingRows.length}
+          </p>
         </div>
       </div>
-      <div className="shrink-0 border-b border-[var(--screening-border-strong)] bg-[var(--screening-surface)] px-3 py-2.5">
+      <div className={cn(aceScrollableListControlsClass, "border-b border-[var(--ace-scrollable-list-border)]")}>
         <div className="flex items-end gap-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <span
-              className="font-['Noto_Sans:SemiBold',sans-serif] text-[13px] text-[#23262c] dark:text-[#b6c2cf]"
-              style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100" }}
+              className="font-['Noto_Sans:SemiBold',sans-serif] text-[13px] text-[var(--screening-text-primary)]"
+              style={aceScrollableListNotoVar}
             >
               Filter by
             </span>
@@ -527,8 +540,8 @@ function CaseList({
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
             <span
-              className="font-['Noto_Sans:SemiBold',sans-serif] text-[13px] text-[#23262c] dark:text-[#b6c2cf]"
-              style={{ fontVariationSettings: "'CTGR' 0, 'wdth' 100" }}
+              className="font-['Noto_Sans:SemiBold',sans-serif] text-[13px] text-[var(--screening-text-primary)]"
+              style={aceScrollableListNotoVar}
             >
               Sort by
             </span>

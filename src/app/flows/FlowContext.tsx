@@ -32,9 +32,11 @@ type FlowContextValue = {
   startPageProduct: LandingProduct | null;
   setStartPageProduct: (product: LandingProduct | null) => void;
   openReviewAssigned: () => void;
+  openCaseBrowser: () => void;
   openWatchlistLanding: () => void;
   openPaymentsLanding: () => void;
   openKycLanding: () => void;
+  openKycClientSearch: () => void;
   openReportingLanding: () => void;
   openReportingDashboard: () => void;
   openReportingReportLibrary: () => void;
@@ -69,6 +71,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     setAppView("review");
   }, []);
 
+  const openCaseBrowser = useCallback(() => {
+    setLandingProduct("watchlist");
+    setAppView("case-browser");
+  }, []);
+
   const openWatchlistLanding = useCallback(() => {
     setLandingProduct("watchlist");
     setAppView("landing");
@@ -82,6 +89,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const openKycLanding = useCallback(() => {
     setLandingProduct("kyc");
     setAppView("landing");
+  }, []);
+
+  const openKycClientSearch = useCallback(() => {
+    setLandingProduct("kyc");
+    setAppView("kyc-client-search");
   }, []);
 
   const openReportingLanding = useCallback(() => {
@@ -140,9 +152,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       startPageProduct,
       setStartPageProduct,
       openReviewAssigned,
+      openCaseBrowser,
       openWatchlistLanding,
       openPaymentsLanding,
       openKycLanding,
+      openKycClientSearch,
       openReportingLanding,
       openReportingDashboard,
       openReportingReportLibrary,
@@ -161,9 +175,11 @@ export function FlowProvider({ children }: { children: ReactNode }) {
       landingProduct,
       startPageProduct,
       openReviewAssigned,
+      openCaseBrowser,
       openWatchlistLanding,
       openPaymentsLanding,
       openKycLanding,
+      openKycClientSearch,
       openReportingLanding,
       openReportingDashboard,
       openReportingReportLibrary,

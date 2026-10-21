@@ -360,12 +360,14 @@ function WatchlistNavMenu({
   activeItem,
   onLandingSelect,
   onAssignedCasesSelect,
+  onCaseBrowserSelect,
 }: {
   selected: boolean;
   accent: string;
-  activeItem: "assigned-cases" | null;
+  activeItem: "assigned-cases" | "case-browser" | null;
   onLandingSelect: () => void;
   onAssignedCasesSelect: () => void;
+  onCaseBrowserSelect: () => void;
 }) {
   return (
     <ProductNavSplit
@@ -376,12 +378,20 @@ function WatchlistNavMenu({
     >
       {WATCHLIST_FEATURE_ITEMS.map((itemLabel) => {
         const isAssignedCases = itemLabel === "Assigned Cases";
-        const isSelected = isAssignedCases && activeItem === "assigned-cases";
+        const isCaseBrowser = itemLabel === "Case Browser";
+        const isSelected =
+          (isAssignedCases && activeItem === "assigned-cases") ||
+          (isCaseBrowser && activeItem === "case-browser");
+        const onSelect = isAssignedCases
+          ? onAssignedCasesSelect
+          : isCaseBrowser
+            ? onCaseBrowserSelect
+            : undefined;
         return (
           <DropdownMenuItem
             key={itemLabel}
             className={isSelected ? menuSelectedClass : menuItemClass}
-            onSelect={isAssignedCases ? onAssignedCasesSelect : undefined}
+            onSelect={onSelect}
           >
             {itemLabel}
           </DropdownMenuItem>
@@ -472,13 +482,21 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
     openWatchlistLanding,
     openPaymentsLanding,
     openKycLanding,
+    openKycClientSearch,
     openReportingLanding,
     openReportingDashboard,
     openReportingReportLibrary,
     openReportingDataManager,
     openReviewAssigned,
+    openCaseBrowser,
   } = useUserFlow();
-  const watchlistActiveItem = appView === "review" ? "assigned-cases" : null;
+  const watchlistActiveItem =
+    appView === "review"
+      ? "assigned-cases"
+      : appView === "case-browser"
+        ? "case-browser"
+        : null;
+  const kycActiveFeature = appView === "kyc-client-search" ? "Client Search" : null;
   const reportingActiveFeature =
     appView === "reporting-dashboard"
       ? "Dashboard"
@@ -502,6 +520,7 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               activeItem={watchlistActiveItem}
               onLandingSelect={openWatchlistLanding}
               onAssignedCasesSelect={openReviewAssigned}
+              onCaseBrowserSelect={openCaseBrowser}
             />
           );
         }
@@ -528,6 +547,11 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               accent={item.accent}
               featureItems={KYC_FEATURE_ITEMS}
               onLandingSelect={openKycLanding}
+              activeFeature={kycActiveFeature}
+              onFeatureSelect={(feature) => {
+                if (feature === "Client Search") openKycClientSearch();
+                else openKycLanding();
+              }}
             />
           );
         }
@@ -569,15 +593,17 @@ export function ReviewFlowSiteHeader({
 
   const resolvedProduct: ProductNavId =
     activeProduct ??
-    (appView === "review"
+    (appView === "review" || appView === "case-browser"
       ? "watchlist"
-      : appView === "payments-management"
-        ? "payments"
-        : appView === "reporting-dashboard" ||
-            appView === "reporting-report-library" ||
-            appView === "reporting-data-manager"
-          ? "reporting"
-          : landingProduct);
+      : appView === "kyc-client-search"
+        ? "kyc"
+        : appView === "payments-management"
+          ? "payments"
+          : appView === "reporting-dashboard" ||
+              appView === "reporting-report-library" ||
+              appView === "reporting-data-manager"
+            ? "reporting"
+            : landingProduct);
 
   return (
     <div className="relative shrink-0">

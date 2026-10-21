@@ -46,7 +46,7 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
 ];
 
 export function WatchlistLandingPage() {
-  const { openReviewAssigned } = useUserFlow();
+  const { openReviewAssigned, openCaseBrowser } = useUserFlow();
 
   const featureCards = useMemo((): LandingFeatureCard[] => {
     const assignedCount = getAssignedCasesBadgeCount(getInitialOpenSanctionCaseCount());
@@ -63,6 +63,8 @@ export function WatchlistLandingPage() {
         id: "case-browser",
         title: "Case Browser",
         description: "Description of the feature goes here...",
+        navigates: true,
+        onActivate: openCaseBrowser,
       },
       {
         id: "name-address-search",
@@ -95,7 +97,7 @@ export function WatchlistLandingPage() {
         description: "Description of the feature goes here...",
       },
     ];
-  }, [openReviewAssigned]);
+  }, [openReviewAssigned, openCaseBrowser]);
 
   return (
     <ProductLandingPage

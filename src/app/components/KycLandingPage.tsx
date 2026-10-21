@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { useUserFlow } from "../flows/FlowContext";
 import {
   ProductLandingPage,
   type LandingFeatureCard,
@@ -6,39 +8,6 @@ import {
 
 const HERO_DESCRIPTION =
   "Perform real-time compliance checks on potential customers and vendors using KYC features, which can include screening against sanctions lists and adverse media, as well as ID authentication, and identity verification.";
-
-const FEATURE_CARDS: readonly LandingFeatureCard[] = [
-  {
-    id: "client-search",
-    title: "Client Search",
-    description: "Description of the feature goes here...",
-  },
-  {
-    id: "media-search",
-    title: "Media Search",
-    description: "Description of the feature goes here...",
-  },
-  {
-    id: "verify-search",
-    title: "Verify Search",
-    description: "Description of the feature goes here...",
-  },
-  {
-    id: "validate-search",
-    title: "Validate Search",
-    description: "Description of the feature goes here...",
-  },
-  {
-    id: "add-client",
-    title: "Add Client",
-    description: "Description of the feature goes here...",
-  },
-  {
-    id: "upload-client-file",
-    title: "Upload Client File",
-    description: "Description of the feature goes here...",
-  },
-];
 
 const LINK_COLUMNS: readonly LandingLinkColumn[] = [
   {
@@ -72,12 +41,52 @@ const LINK_COLUMNS: readonly LandingLinkColumn[] = [
 ];
 
 export function KycLandingPage() {
+  const { openKycClientSearch } = useUserFlow();
+
+  const featureCards = useMemo(
+    (): LandingFeatureCard[] => [
+      {
+        id: "client-search",
+        title: "Client Search",
+        description: "Description of the feature goes here...",
+        navigates: true,
+        onActivate: openKycClientSearch,
+      },
+      {
+        id: "media-search",
+        title: "Media Search",
+        description: "Description of the feature goes here...",
+      },
+      {
+        id: "verify-search",
+        title: "Verify Search",
+        description: "Description of the feature goes here...",
+      },
+      {
+        id: "validate-search",
+        title: "Validate Search",
+        description: "Description of the feature goes here...",
+      },
+      {
+        id: "add-client",
+        title: "Add Client",
+        description: "Description of the feature goes here...",
+      },
+      {
+        id: "upload-client-file",
+        title: "Upload Client File",
+        description: "Description of the feature goes here...",
+      },
+    ],
+    [openKycClientSearch],
+  );
+
   return (
     <ProductLandingPage
       product="kyc"
       palette="innovative-blue"
       heroDescription={HERO_DESCRIPTION}
-      featureCards={FEATURE_CARDS}
+      featureCards={featureCards}
       linkColumns={LINK_COLUMNS}
     />
   );

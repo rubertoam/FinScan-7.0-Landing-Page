@@ -4,6 +4,8 @@ import { useUserFlow } from "./FlowContext";
 import { WatchlistLandingPage } from "../components/WatchlistLandingPage";
 import { PaymentsLandingPage } from "../components/PaymentsLandingPage";
 import { KycLandingPage } from "../components/KycLandingPage";
+import { KycClientSearchPage } from "../components/KycClientSearchPage";
+import { CaseBrowserPage } from "../components/CaseBrowserPage";
 import { ReportingLandingPage } from "../components/ReportingLandingPage";
 import { ReportingDashboardPage } from "../components/ReportingDashboardPage";
 import { ReportingReportLibraryPage } from "../components/ReportingReportLibraryPage";
@@ -30,6 +32,14 @@ export function ReviewFlowRouter() {
 
   if (appView === "administration-settings") {
     return <AdministrationSettingsPage />;
+  }
+
+  if (appView === "case-browser") {
+    return <CaseBrowserPage />;
+  }
+
+  if (appView === "kyc-client-search") {
+    return <KycClientSearchPage />;
   }
 
   if (appView === "reporting-dashboard") {

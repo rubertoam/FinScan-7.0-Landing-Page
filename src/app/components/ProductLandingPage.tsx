@@ -50,7 +50,10 @@ const PALETTE = {
       "bg-[linear-gradient(to_top_left,var(--screening-primary-soft-bg)_0%,#CBC5EC_22%,var(--screening-primary-200)_48%,var(--screening-primary)_72%,var(--ace-button-purple-500)_100%)]",
       "dark:bg-[linear-gradient(to_top_left,var(--ace-dark-mode-800)_0%,#2a2540_28%,#3d2e6a_55%,var(--ace-button-purple-500)_100%)]",
     ),
-    cardFill: "bg-[var(--ace-landing-page-card-footer-bg)]",
+    cardFill: cn(
+      "bg-[var(--screening-primary-soft-bg)]",
+      "dark:bg-[var(--ace-dark-mode-700)]",
+    ),
     focusRingOffset: "focus-visible:ring-offset-[var(--ace-button-purple-500)]",
     floatingAction:
       "bg-[var(--ace-button-purple-400)] dark:bg-[var(--ace-button-purple-500)]",

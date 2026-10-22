@@ -40,14 +40,13 @@ const PRODUCT_NAV: readonly {
 ];
 
 const WATCHLIST_FEATURE_ITEMS = [
+  "Workbench",
   "Assigned Cases",
   "Case Browser",
-  "Name/Address List Search",
-  "Specific Element List Search",
-  "QuickScan",
+  "List Search",
   "Search Audit Logs",
   "User Defined List Editor",
-  "Match Simulation",
+  "Match Sim",
 ] as const;
 
 const PAYMENTS_FEATURE_ITEMS = [
@@ -169,8 +168,8 @@ function SettingsMenuDropdown() {
       <DropdownMenuTrigger asChild>
         <button type="button" aria-label="Settings" className={aceIconButtonHoverClass}>
           <MaterialSymbol
-            name="tune"
-            size="xl"
+            name="settings"
+            size="md"
             className="text-[var(--ace-site-header-toolbar-icon-color)]"
           />
         </button>
@@ -258,10 +257,18 @@ function HeaderTrailingActions({ profile }: { profile: FinScanProfileAvatar }) {
     <div className="flex items-center gap-[var(--ace-site-header-toolbar-gap)] overflow-visible py-1">
       <SettingsMenuDropdown />
       <ToolbarIconButton label="Notifications">
-        <MaterialSymbol name="notifications" size="md" />
+        <MaterialSymbol
+          name="notifications"
+          size="md"
+          className="text-[var(--ace-site-header-toolbar-icon-color)]"
+        />
       </ToolbarIconButton>
       <ToolbarIconButton label="Help">
-        <MaterialSymbol name="help" size="md" />
+        <MaterialSymbol
+          name="help"
+          size="md"
+          className="text-[var(--ace-site-header-toolbar-icon-color)]"
+        />
       </ToolbarIconButton>
       <ProfileMenuDropdown profile={profile} />
     </div>
@@ -359,14 +366,14 @@ function WatchlistNavMenu({
   accent,
   activeItem,
   onLandingSelect,
-  onAssignedCasesSelect,
+  onWorkbenchSelect,
   onCaseBrowserSelect,
 }: {
   selected: boolean;
   accent: string;
-  activeItem: "assigned-cases" | "case-browser" | null;
+  activeItem: "workbench" | "case-browser" | null;
   onLandingSelect: () => void;
-  onAssignedCasesSelect: () => void;
+  onWorkbenchSelect: () => void;
   onCaseBrowserSelect: () => void;
 }) {
   return (
@@ -377,13 +384,13 @@ function WatchlistNavMenu({
       onLabelSelect={onLandingSelect}
     >
       {WATCHLIST_FEATURE_ITEMS.map((itemLabel) => {
-        const isAssignedCases = itemLabel === "Assigned Cases";
+        const isWorkbench = itemLabel === "Workbench";
         const isCaseBrowser = itemLabel === "Case Browser";
         const isSelected =
-          (isAssignedCases && activeItem === "assigned-cases") ||
+          (isWorkbench && activeItem === "workbench") ||
           (isCaseBrowser && activeItem === "case-browser");
-        const onSelect = isAssignedCases
-          ? onAssignedCasesSelect
+        const onSelect = isWorkbench
+          ? onWorkbenchSelect
           : isCaseBrowser
             ? onCaseBrowserSelect
             : undefined;
@@ -492,7 +499,7 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
   } = useUserFlow();
   const watchlistActiveItem =
     appView === "review"
-      ? "assigned-cases"
+      ? "workbench"
       : appView === "case-browser"
         ? "case-browser"
         : null;
@@ -519,7 +526,7 @@ function ProductNav({ activeId }: { activeId: ProductNavId }) {
               accent={item.accent}
               activeItem={watchlistActiveItem}
               onLandingSelect={openWatchlistLanding}
-              onAssignedCasesSelect={openReviewAssigned}
+              onWorkbenchSelect={openReviewAssigned}
               onCaseBrowserSelect={openCaseBrowser}
             />
           );

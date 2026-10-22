@@ -5,8 +5,8 @@ import { ThemeProvider } from "../context/ThemeContext";
 import { useUserFlow } from "../flows/FlowContext";
 import type { LandingProduct } from "../lib/appNavigation";
 import { aceTypography, ACE_TYPE } from "../lib/aceTypography";
-import { AskChattyBubble } from "./AskChattyBubble";
 import { Checkbox } from "./ui/checkbox";
+import { OnlineHelpFab } from "./OnlineHelpFab";
 import { cn } from "./ui/utils";
 import { ReviewFlowSiteHeader } from "./ReviewFlowSiteHeader";
 
@@ -279,7 +279,6 @@ export function ProductLandingPage({
 }: ProductLandingPageProps) {
   const { startPageProduct, setStartPageProduct } = useUserFlow();
   const [featuresExpanded, setFeaturesExpanded] = useState(true);
-  const [chattyOpen, setChattyOpen] = useState(false);
   const colors = PALETTE[palette];
   const isStartPage = startPageProduct === product;
 
@@ -288,44 +287,46 @@ export function ProductLandingPage({
       <div className="flex h-screen w-screen flex-col overflow-hidden bg-[var(--screening-surface)] text-[var(--screening-text-primary)]">
         <ReviewFlowSiteHeader activeProduct={product} />
 
-        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--screening-border-strong)] bg-[var(--screening-surface)] px-4 py-3 md:px-8">
-          <div className="flex min-w-0 flex-wrap items-center gap-4 md:gap-6">
-            <p className={cn(aceTypography(ACE_TYPE.p1SemiBold), "m-0 text-[var(--screening-text-primary)]")}>
-              Welcome to FinScan v7.0
-            </p>
-            <label className="flex cursor-pointer items-center gap-2">
-              <Checkbox
-                checked={isStartPage}
-                onCheckedChange={(checked) =>
-                  setStartPageProduct(checked === true ? product : null)
-                }
-                aria-label="Set as my start page"
-              />
-              <span className={cn(aceTypography(ACE_TYPE.p1Regular), "text-sm text-[var(--screening-text-primary)]")}>
-                Set as my start page
-              </span>
-            </label>
-          </div>
-          <div
-            className={cn(
-              "inline-flex shrink-0 items-center justify-center border border-[var(--screening-border-strong)] bg-[var(--screening-surface)] px-3 py-1.5",
-              aceTypography(ACE_TYPE.captionBold),
-              "text-[var(--screening-text-secondary)]",
-            )}
-            aria-label="Organization"
-          >
-            AIG
-          </div>
-        </div>
-
         <section
           className={cn(
-            "relative shrink-0 px-4 py-[1.875rem] md:px-8 md:py-10",
+            "relative flex min-h-0 flex-1 flex-col px-4 py-[1.875rem] md:px-8 md:py-10",
             colors.heroGradient,
           )}
         >
           <div aria-hidden className={cn("pointer-events-none absolute inset-0", colors.heroOverlay)} />
           <div className="relative mx-auto flex w-fit max-w-full flex-col gap-5">
+            <div className="flex w-full min-w-0 items-center justify-between gap-4">
+              <label className="flex min-w-0 cursor-pointer items-center gap-2">
+                <Checkbox
+                  checked={isStartPage}
+                  onCheckedChange={(checked) =>
+                    setStartPageProduct(checked === true ? product : null)
+                  }
+                  aria-label="Set as my start page"
+                  className="border-white/70 data-[state=checked]:border-white data-[state=checked]:bg-white data-[state=checked]:text-[var(--ace-button-purple-500)]"
+                />
+                <span
+                  className={cn(
+                    aceTypography(ACE_TYPE.p1Regular),
+                    "text-sm text-white",
+                    "[text-shadow:0_1px_2px_rgb(26_20_59_/_0.35)]",
+                  )}
+                >
+                  Set as my start page
+                </span>
+              </label>
+              <div
+                className={cn(
+                  "inline-flex shrink-0 items-center justify-center border border-white/50 bg-[var(--screening-surface)] px-3 py-1.5",
+                  aceTypography(ACE_TYPE.captionBold),
+                  "text-[var(--screening-text-secondary)]",
+                )}
+                aria-label="Organization"
+              >
+                AIG
+              </div>
+            </div>
+
             <p
               className={cn(
                 aceTypography(ACE_TYPE.p1Regular),
@@ -347,8 +348,21 @@ export function ProductLandingPage({
                   : "-mt-5 grid-rows-[0fr] opacity-0",
               )}
             >
-              <div className="min-h-0 overflow-hidden" aria-hidden={!featuresExpanded}>
-                <div className={landingFeatureCardGridClass}>
+              <div
+                className={cn(
+                  "min-h-0",
+                  // Expanded: let hover shadows bleed; collapsed: clip for accordion motion.
+                  featuresExpanded ? "overflow-visible" : "overflow-hidden",
+                )}
+                aria-hidden={!featuresExpanded}
+              >
+                <div
+                  className={cn(
+                    landingFeatureCardGridClass,
+                    // Room for bottom-row drop shadows without clipping.
+                    "px-2 pb-6 pt-1",
+                  )}
+                >
                   {featureCards.map((card) => (
                     <LandingFeatureCardView
                       key={card.id}
@@ -377,10 +391,10 @@ export function ProductLandingPage({
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col justify-center px-4 py-4 md:px-8 md:py-5">
+        <section className="flex shrink-0 flex-col px-4 py-[1.125rem] md:px-8 md:py-[1.35rem]">
           <div
             className={cn(
-              "mx-auto flex w-full max-w-[calc(4*var(--ace-landing-page-card-width)+3*1rem)] flex-col gap-4",
+              "mx-auto flex w-full max-w-[calc(4*var(--ace-landing-page-card-width)+3*1rem)] flex-col gap-[1.125rem]",
             )}
           >
             <h2
@@ -393,13 +407,13 @@ export function ProductLandingPage({
             </h2>
             <div
               className={cn(
-                "grid w-full items-start gap-x-10 gap-y-8",
+                "grid w-full items-start gap-x-10 gap-y-9",
                 "grid-cols-1 min-[40rem]:grid-cols-3",
               )}
             >
               {linkColumns.map((column) => (
-                <div key={column.id} className="flex min-w-0 flex-col gap-3">
-                  <div className="flex h-8 items-center gap-2">
+                <div key={column.id} className="flex min-w-0 flex-col gap-[0.9375rem]">
+                  <div className="flex h-12 items-center gap-2">
                     <MaterialSymbol
                       name={column.icon}
                       size="md"
@@ -414,14 +428,14 @@ export function ProductLandingPage({
                       {column.title}
                     </h3>
                   </div>
-                  <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                  <ul className="m-0 flex list-none flex-col gap-3 p-0">
                     {column.links.map((label) => (
                       <li key={label}>
                         <button
                           type="button"
                           className={cn(
                             aceTypography(ACE_TYPE.p1Regular),
-                            "text-left text-sm text-[var(--screening-text-primary)]",
+                            "text-left text-sm leading-snug text-[var(--screening-text-primary)]",
                             "rounded-[var(--radius-sm)] transition-colors duration-[var(--ace-motion-duration-fast)]",
                             "[transition-timing-function:var(--ace-motion-ease-standard)]",
                             "hover:text-[var(--screening-primary)] hover:underline",
@@ -450,24 +464,7 @@ export function ProductLandingPage({
           </p>
         </footer>
 
-        <AskChattyBubble open={chattyOpen} onClose={() => setChattyOpen(false)} />
-
-        <button
-          type="button"
-          data-ask-chatty-trigger
-          aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
-          aria-expanded={chattyOpen}
-          onClick={() => setChattyOpen((open) => !open)}
-          className={cn(
-            "fixed bottom-6 right-6 z-30 inline-flex size-12 items-center justify-center rounded-[var(--radius-md)]",
-            colors.floatingAction,
-            "text-white shadow-[var(--ace-landing-page-card-shadow-hover)]",
-            "transition-transform duration-[var(--ace-motion-duration-fast)] [transition-timing-function:var(--ace-motion-ease-standard)]",
-            "hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2",
-          )}
-        >
-          <MaterialSymbol name={chattyOpen ? "close" : "smart_toy"} size="lg" />
-        </button>
+        <OnlineHelpFab className={colors.floatingAction} />
       </div>
     </ThemeProvider>
   );

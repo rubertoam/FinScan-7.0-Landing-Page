@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
-import { MaterialSymbol } from "@ace-ds/components/molecules/AceAccordion/MaterialSymbol";
 import { ThemeProvider } from "../context/ThemeContext";
 import { useUserFlow } from "../flows/FlowContext";
 import { aceTypography, ACE_TYPE } from "../lib/aceTypography";
-import { AskChattyBubble } from "./AskChattyBubble";
+import { OnlineHelpFab } from "./OnlineHelpFab";
 import {
   LandingFeatureCardView,
   landingFeatureCardDefaultChrome,
@@ -35,7 +34,6 @@ export function AllSettingsPage() {
     openAdministrationSettings,
   } = useUserFlow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [chattyOpen, setChattyOpen] = useState(false);
 
   const featureCards = useMemo((): LandingFeatureCard[] => {
     return SETTINGS_CARD_DEFS.map((card) => ({
@@ -108,22 +106,7 @@ export function AllSettingsPage() {
           </p>
         </footer>
 
-        <AskChattyBubble open={chattyOpen} onClose={() => setChattyOpen(false)} />
-        <button
-          type="button"
-          data-ask-chatty-trigger
-          aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
-          aria-expanded={chattyOpen}
-          onClick={() => setChattyOpen((open) => !open)}
-          className={cn(
-            "fixed bottom-6 right-6 z-30 inline-flex size-12 items-center justify-center rounded-[var(--radius-md)]",
-            "bg-[var(--ace-button-purple-500)] text-white shadow-[var(--ace-landing-page-card-shadow-hover)]",
-            "transition-transform duration-[var(--ace-motion-duration-fast)] [transition-timing-function:var(--ace-motion-ease-standard)]",
-            "hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2",
-          )}
-        >
-          <MaterialSymbol name={chattyOpen ? "close" : "smart_toy"} size="lg" />
-        </button>
+        <OnlineHelpFab />
       </div>
     </ThemeProvider>
   );

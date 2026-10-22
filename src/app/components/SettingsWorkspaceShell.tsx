@@ -4,7 +4,7 @@ import { sidebarIconButtonClass } from "@ace-ds/components/organisms/AceSidebar/
 import { MaterialSymbol } from "@ace-ds/components/molecules/AceAccordion/MaterialSymbol";
 import { ThemeProvider } from "../context/ThemeContext";
 import type { ProductNavId } from "./ReviewFlowSiteHeader";
-import { AskChattyBubble } from "./AskChattyBubble";
+import { OnlineHelpFab } from "./OnlineHelpFab";
 import { ReviewFlowSiteHeader } from "./ReviewFlowSiteHeader";
 import { cn } from "./ui/utils";
 
@@ -37,7 +37,6 @@ export function SettingsWorkspaceShell({
   const [sidebarOpenUncontrolled, setSidebarOpenUncontrolled] = useState(true);
   const sidebarOpen = sidebarOpenProp ?? sidebarOpenUncontrolled;
   const setSidebarOpen = onSidebarOpenChange ?? setSidebarOpenUncontrolled;
-  const [chattyOpen, setChattyOpen] = useState(false);
   const [menuHost, setMenuHost] = useState<HTMLDivElement | null>(null);
 
   return (
@@ -118,22 +117,7 @@ export function SettingsWorkspaceShell({
           </main>
         </div>
 
-        <AskChattyBubble open={chattyOpen} onClose={() => setChattyOpen(false)} />
-        <button
-          type="button"
-          data-ask-chatty-trigger
-          aria-label={chattyOpen ? "Close Ask Chatty" : "Ask Chatty"}
-          aria-expanded={chattyOpen}
-          onClick={() => setChattyOpen((open) => !open)}
-          className={cn(
-            "fixed bottom-6 right-6 z-30 inline-flex size-12 items-center justify-center rounded-[var(--radius-md)]",
-            "bg-[var(--ace-button-purple-500)] text-white shadow-[var(--ace-landing-page-card-shadow-hover)]",
-            "transition-transform duration-[var(--ace-motion-duration-fast)] [transition-timing-function:var(--ace-motion-ease-standard)]",
-            "hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--screening-primary-ring)] focus-visible:ring-offset-2",
-          )}
-        >
-          <MaterialSymbol name={chattyOpen ? "close" : "smart_toy"} size="lg" />
-        </button>
+        <OnlineHelpFab />
       </div>
     </ThemeProvider>
   );

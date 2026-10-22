@@ -52,12 +52,17 @@ export function WatchlistLandingPage() {
     const assignedCount = getAssignedCasesBadgeCount(getInitialOpenSanctionCaseCount());
     return [
       {
-        id: "assigned-cases",
-        title: "Assigned Cases",
+        id: "workbench",
+        title: "Workbench",
         description: "Description of the feature goes here...",
         navigates: true,
         badgeCount: assignedCount,
         onActivate: openReviewAssigned,
+      },
+      {
+        id: "assigned-cases",
+        title: "Assigned Cases",
+        description: "Description of the feature goes here...",
       },
       {
         id: "case-browser",
@@ -67,18 +72,8 @@ export function WatchlistLandingPage() {
         onActivate: openCaseBrowser,
       },
       {
-        id: "name-address-search",
-        title: "Name/Address List Search",
-        description: "Description of the feature goes here...",
-      },
-      {
-        id: "specific-element-search",
-        title: "Specific Element List Search",
-        description: "Description of the feature goes here...",
-      },
-      {
-        id: "quickscan",
-        title: "QuickScan",
+        id: "list-search",
+        title: "List Search",
         description: "Description of the feature goes here...",
       },
       {
@@ -92,8 +87,8 @@ export function WatchlistLandingPage() {
         description: "Description of the feature goes here...",
       },
       {
-        id: "match-simulation",
-        title: "Match Simulation",
+        id: "match-sim",
+        title: "Match Sim",
         description: "Description of the feature goes here...",
       },
     ];

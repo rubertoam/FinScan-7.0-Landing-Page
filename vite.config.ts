@@ -11,10 +11,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /** ACE Design System (ACEDesignSystem / ds-github) — local sandbox clone */
-const aceDesignSystemSrc = path.resolve(
-  __dirname,
-  '../../Design System/Design System Sandbox/src',
-)
+const aceDesignSystemSrc = process.env.ACE_DS_SRC?.trim()
+  ? path.resolve(process.env.ACE_DS_SRC.trim())
+  : path.resolve(__dirname, '../../Design System/Design System Sandbox/src')
 
 function toPosix(p: string) {
   return p.split(path.sep).join('/')
@@ -24,38 +23,31 @@ function toPosix(p: string) {
  * ACEDesignSystem renamed Ace* folders (AceAccordion → Accordion, etc.) and left
  * only index re-exports. This app still deep-imports Ace* paths; synthesize Ace-named
  * re-exports so local + CI builds keep working.
+ *
+ * Vite resolves `@ace-ds/...` via the alias to an absolute filesystem path before
+ * plugins see the bare id, so we must also match those absolute Ace* paths.
  */
 function aceLegacyDeepImportCompat() {
   const ds = toPosix(aceDesignSystemSrc)
+  const dsAbsPosix = toPosix(path.resolve(aceDesignSystemSrc))
   const PREFIX = '\0ace-legacy:'
 
+  // Value-only re-exports (no `type`) — virtual modules are parsed as plain JS.
   const modules: Record<string, string> = {
     '@ace-ds/components/molecules/AceAccordion/MaterialSymbol': `
 export { MaterialSymbol } from '${ds}/components/molecules/Accordion/MaterialSymbol.tsx'
 `,
     '@ace-ds/components/molecules/AceAccordion/AceAccordion': `
-export {
-  Accordion as AceAccordion,
-  type AccordionProps as AceAccordionProps,
-  type AccordionSurface as AceAccordionSurface,
-} from '${ds}/components/molecules/Accordion/Accordion.tsx'
+export { Accordion as AceAccordion } from '${ds}/components/molecules/Accordion/Accordion.tsx'
 `,
     '@ace-ds/components/organisms/AceCards/AceLandingPageCard': `
-export {
-  LandingPageCard as AceLandingPageCard,
-  type LandingPageCardFooterStat as AceLandingPageCardFooterStat,
-  type LandingPageCardProps as AceLandingPageCardProps,
-  type LandingPageCardStatItem as AceLandingPageCardStatItem,
-  type LandingPageCardVariant as AceLandingPageCardVariant,
-} from '${ds}/components/organisms/Cards/LandingPageCard.tsx'
+export { LandingPageCard as AceLandingPageCard } from '${ds}/components/organisms/Cards/LandingPageCard.tsx'
 `,
     '@ace-ds/components/atoms/AceBadge/AceBadge': `
-export { Badge as AceBadge, type BadgeProps as AceBadgeProps } from '${ds}/components/atoms/Badge/Badge.tsx'
+export { Badge as AceBadge } from '${ds}/components/atoms/Badge/Badge.tsx'
 `,
     '@ace-ds/components/atoms/AceBadge/badgeFieldStyles': `
 export {
-  type BadgeVariant as AceBadgeVariant,
-  type BadgeAppearance as AceBadgeAppearance,
   badgeStatusShellClass as aceBadgeStatusShellClass,
   badgeTagShellClass as aceBadgeTagShellClass,
   badgeStatusDotClass as aceBadgeStatusDotClass,
@@ -74,9 +66,6 @@ export {
 export {
   Tabs as AceTabs,
   tabButtonId as aceTabButtonId,
-  type TabItem as AceTabItem,
-  type TabsOrientation as AceTabsOrientation,
-  type TabsProps as AceTabsProps,
 } from '${ds}/components/atoms/Tabs/Tabs.tsx'
 `,
     '@ace-ds/components/atoms/AceTooltip/AceTooltip': `
@@ -93,12 +82,6 @@ export {
   DropdownMenu as AceDropdownMenu,
   DropdownMenuPanel as AceDropdownMenuPanel,
   dropdownMenuPanelClass as aceDropdownMenuPanelClass,
-  type DropdownMenuEntry as AceDropdownMenuEntry,
-  type DropdownMenuPanelProps as AceDropdownMenuPanelProps,
-  type DropdownMenuPanelWidth as AceDropdownMenuPanelWidth,
-  type DropdownMenuProps as AceDropdownMenuProps,
-  type DropdownMenuSubItem as AceDropdownMenuSubItem,
-  type DropdownTriggerMode as AceDropdownTriggerMode,
 } from '${ds}/components/molecules/DropdownMenu/DropdownMenu.tsx'
 `,
     '@ace-ds/components/molecules/AceDropdownMenu/dropdownFieldStyles': `
@@ -111,15 +94,7 @@ export {
 } from '${ds}/components/molecules/DropdownMenu/dropdownFieldStyles.tsx'
 `,
     '@ace-ds/components/organisms/AceDatePicker/AceDatePicker': `
-export {
-  DatePicker as AceDatePicker,
-  type DatePickerMode as AceDatePickerMode,
-  type DatePickerProps as AceDatePickerProps,
-  type DatePickerRangeProps as AceDatePickerRangeProps,
-  type DatePickerSingleProps as AceDatePickerSingleProps,
-  type DateRangeValue,
-  type PartialDateRange,
-} from '${ds}/components/organisms/DatePicker/DatePicker.tsx'
+export { DatePicker as AceDatePicker } from '${ds}/components/organisms/DatePicker/DatePicker.tsx'
 `,
     '@ace-ds/components/organisms/AceScrollableList/scrollableListFieldStyles': `
 export {
@@ -153,47 +128,23 @@ export {
 } from '${ds}/components/organisms/Sidebar/sidebarRowActions.ts'
 `,
     '@ace-ds/components/organisms/AceSidebar/AceSidebar': `
-export {
-  Sidebar as AceSidebar,
-  type SidebarGroup as AceSidebarGroup,
-  type SidebarMenuAction as AceSidebarMenuAction,
-  type SidebarNavItem as AceSidebarNavItem,
-  type SidebarOrganization as AceSidebarOrganization,
-  type SidebarOrganizationDisplay as AceSidebarOrganizationDisplay,
-  type SidebarProps as AceSidebarProps,
-  type SidebarVariant as AceSidebarVariant,
-} from '${ds}/components/organisms/Sidebar/Sidebar.tsx'
+export { Sidebar as AceSidebar } from '${ds}/components/organisms/Sidebar/Sidebar.tsx'
 `,
     '@ace-ds/components/organisms/AceSidebar/GroupFormDialog': `
-export {
-  GroupFormDialog,
-  type GroupFormDialogItem,
-  type GroupFormDialogMode,
-  type GroupFormDialogProps,
-} from '${ds}/components/organisms/Sidebar/GroupFormDialog.tsx'
+export { GroupFormDialog } from '${ds}/components/organisms/Sidebar/GroupFormDialog.tsx'
 `,
     '@ace-ds/components/organisms/AceSiteHeader/AceSiteHeader': `
-export {
-  SiteHeader as AceSiteHeader,
-  type SiteHeaderNavItem as AceSiteHeaderNavItem,
-  type SiteHeaderProps as AceSiteHeaderProps,
-} from '${ds}/components/organisms/SiteHeader/SiteHeader.tsx'
+export { SiteHeader as AceSiteHeader } from '${ds}/components/organisms/SiteHeader/SiteHeader.tsx'
 `,
     '@ace-ds/components/organisms/AceAttachments/AceAttachments': `
 export {
   Attachments as AceAttachments,
   DEMO_ATTACHMENT_FILES,
   DEMO_ATTACHMENT_LINKS,
-  type AttachmentFile as AceAttachmentFile,
-  type AttachmentLink as AceAttachmentLink,
-  type AttachmentsProps as AceAttachmentsProps,
 } from '${ds}/components/organisms/Attachments/Attachments.tsx'
 `,
     '@ace-ds/components/molecules/AceFiltering/AceFilterToggleChip': `
-export {
-  FilterToggleChip as AceFilterToggleChip,
-  type FilterToggleChipProps as AceFilterToggleChipProps,
-} from '${ds}/components/molecules/Filtering/FilterToggleChip.tsx'
+export { FilterToggleChip as AceFilterToggleChip } from '${ds}/components/molecules/Filtering/FilterToggleChip.tsx'
 `,
     '@ace-ds/components/molecules/AcePagination/AcePagination': `
 export {
@@ -201,36 +152,39 @@ export {
   TablePagination as AceTablePagination,
   rangeLabel,
   visiblePageItems,
-  type PaginationProps as AcePaginationProps,
-  type TablePaginationProps as AceTablePaginationProps,
 } from '${ds}/components/molecules/Pagination/Pagination.tsx'
 `,
     '@ace-ds/components/organisms/AceTimeline/AceTimeline': `
 export {
   Timeline as AceTimeline,
   DEMO_TIMELINE_ITEMS,
-  type TimelineProps as AceTimelineProps,
-  type TimelineItemData as AceTimelineItemData,
-  type TimelineItemSurface as AceTimelineItemSurface,
-  type TimelineSort as AceTimelineSort,
-  type TimelineVariant as AceTimelineVariant,
 } from '${ds}/components/organisms/Timeline/Timeline.tsx'
 `,
     '@ace-ds/components/molecules/AceTable/AceTable': `
-export {
-  Table as AceTable,
-  type TableColumn as AceTableColumn,
-  type TableProps as AceTableProps,
-} from '${ds}/components/molecules/Table/Table.tsx'
+export { Table as AceTable } from '${ds}/components/molecules/Table/Table.tsx'
 `,
+  }
+
+  function legacyKeyFor(id: string): string | null {
+    const bare = id.split('?')[0]
+    if (modules[bare]) return bare
+
+    const posix = toPosix(path.isAbsolute(bare) ? path.resolve(bare) : bare)
+    // Absolute path under @ace-ds → @ace-ds/components/...
+    if (posix === dsAbsPosix || posix.startsWith(dsAbsPosix + '/')) {
+      const rel = posix.slice(dsAbsPosix.length).replace(/\.(tsx?|jsx?|mts|cts)$/, '')
+      const key = `@ace-ds${rel}`
+      if (modules[key]) return key
+    }
+    return null
   }
 
   return {
     name: 'ace-legacy-deep-import-compat',
     enforce: 'pre' as const,
     resolveId(id: string) {
-      if (modules[id]) return PREFIX + id
-      return null
+      const key = legacyKeyFor(id)
+      return key ? PREFIX + key : null
     },
     load(id: string) {
       if (!id.startsWith(PREFIX)) return null
@@ -253,12 +207,20 @@ function figmaAssetResolver() {
 
 /** @ace-ds lives outside this repo; resolve its npm imports from our node_modules (CI has no DS install). */
 function aceDsDependencyResolver() {
-  const dsMarker = `${path.sep}Design System${path.sep}`
+  const dsRootPosix = toPosix(path.resolve(aceDesignSystemSrc))
   return {
     name: 'ace-ds-dependency-resolver',
     enforce: 'pre' as const,
     resolveId(source: string, importer?: string) {
-      if (!importer?.includes(dsMarker)) return null
+      if (!importer) return null
+      const importerPosix = toPosix(importer)
+      if (
+        importerPosix !== dsRootPosix &&
+        !importerPosix.startsWith(dsRootPosix + '/') &&
+        !importerPosix.includes('/Design System/')
+      ) {
+        return null
+      }
       if (source.startsWith('.') || source.startsWith('\0') || path.isAbsolute(source)) {
         return null
       }

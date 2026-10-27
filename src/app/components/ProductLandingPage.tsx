@@ -154,13 +154,17 @@ function CardHeaderIcon({ name }: { name: string }) {
   );
 }
 
-/** Shared 4-column feature-card grid used on product landings and All Settings. */
+/**
+ * Shared feature-card grid used on product landings and All Settings.
+ * Cards are fixed `--ace-landing-page-card-width` (25rem). Breakpoints = N×25rem + gaps + ~4rem gutters
+ * (55 / 81 / 107rem). Earlier 26/52/78rem values opened columns before cards could fit on laptops.
+ */
 export const landingFeatureCardGridClass = cn(
   "grid w-fit max-w-full justify-items-start gap-4",
   "grid-cols-1",
-  "min-[26rem]:grid-cols-2",
-  "min-[52rem]:grid-cols-3",
-  "min-[78rem]:grid-cols-4",
+  "min-[55rem]:grid-cols-2",
+  "min-[81rem]:grid-cols-3",
+  "min-[107rem]:grid-cols-4",
 );
 
 /** Default hover-fill + focus ring for cards outside a colored hero (e.g. All Settings). */
@@ -284,12 +288,13 @@ export function ProductLandingPage({
 
   return (
     <ThemeProvider>
-      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[var(--screening-surface)] text-[var(--screening-text-primary)]">
+      <div className="flex h-svh w-full flex-col overflow-x-hidden overflow-y-auto bg-[var(--screening-surface)] text-[var(--screening-text-primary)]">
         <ReviewFlowSiteHeader activeProduct={product} />
 
         <section
           className={cn(
-            "relative flex min-h-0 flex-1 flex-col px-4 py-[1.875rem] md:px-8 md:py-10",
+            // min-h-min: don't shrink below card grid; page scrolls on short laptop viewports.
+            "relative flex min-h-min flex-1 flex-col px-4 py-[1.875rem] md:px-8 md:py-10",
             colors.heroGradient,
           )}
         >
@@ -331,7 +336,8 @@ export function ProductLandingPage({
               className={cn(
                 aceTypography(ACE_TYPE.p1Regular),
                 "m-0 max-w-full text-left text-sm leading-[1.65] text-white md:text-base",
-                "whitespace-normal min-[78rem]:whitespace-nowrap",
+                // Match 4-col card breakpoint so nowrap doesn't force horizontal scroll on laptops.
+                "whitespace-normal min-[107rem]:whitespace-nowrap",
                 "[text-shadow:0_1px_2px_rgb(26_20_59_/_0.35)]",
               )}
             >

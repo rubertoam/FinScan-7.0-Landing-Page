@@ -1,11 +1,8 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-
-const require = createRequire(import.meta.url)
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -208,10 +205,11 @@ function figmaAssetResolver() {
 /** @ace-ds lives outside this repo; resolve its npm imports from our node_modules (CI has no DS install). */
 function aceDsDependencyResolver() {
   const dsRootPosix = toPosix(path.resolve(aceDesignSystemSrc))
+  const appImporter = path.resolve(__dirname, 'package.json')
   return {
     name: 'ace-ds-dependency-resolver',
     enforce: 'pre' as const,
-    resolveId(source: string, importer?: string) {
+    async resolveId(this: { resolve: (id: string, importer?: string, opts?: { skipSelf?: boolean }) => Promise<{ id: string } | null> }, source: string, importer?: string) {
       if (!importer) return null
       const importerPosix = toPosix(importer)
       if (
@@ -224,11 +222,9 @@ function aceDsDependencyResolver() {
       if (source.startsWith('.') || source.startsWith('\0') || path.isAbsolute(source)) {
         return null
       }
-      try {
-        return require.resolve(source, { paths: [__dirname] })
-      } catch {
-        return null
-      }
+      // Delegate to Vite from the app root so package "exports" / ESM conditions apply
+      // (require.resolve would pick CJS builds and break named imports in the browser).
+      return this.resolve(source, appImporter, { skipSelf: true })
     },
   }
 }
